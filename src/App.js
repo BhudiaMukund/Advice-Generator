@@ -1,24 +1,49 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from "react";
 
 function App() {
+  const url = "https://api.adviceslip.com/advice";
+  const [advice, setAdvice] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchAdvice = async () => {
+    setLoading(true);
+    const response = await fetch(url);
+    const adviceResponse = await response.json();
+    setLoading(false);
+    setAdvice(adviceResponse.slip);
+  };
+
+  useEffect(() => {
+    fetchAdvice();
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <section className="card">
+      <div className={loading ? `loading` : `not-loading`}>
+        <div className="dice-container">
+          <img src="/images/icon-dice.svg" id="loading" />
+        </div>
+      </div>
+      <header>{`ADVICE #${advice.id}`}</header>
+      <main>
+        <p>{`“ ${advice.advice}”`}</p>
+      </main>
+      <footer>
+        <img
+          src="/images/pattern-divider-desktop.svg"
+          alt="divider"
+          className="desktop-divider divider"
+        />
+        <img
+          src="/images/pattern-divider-mobile.svg"
+          alt="divider"
+          className="mobile-divider divider"
+        />
+        <div className="dice-container" id="next" onClick={() => fetchAdvice()}>
+          <img src="/images/icon-dice.svg" className="dice" />
+        </div>
+      </footer>
+    </section>
   );
 }
 
